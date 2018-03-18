@@ -1,6 +1,7 @@
 /*-----------------------------------------------------------------------------
 A simple echo bot for the Microsoft Bot Framework. 
 -----------------------------------------------------------------------------*/
+require('dotenv').config();
 
 var restify = require('restify');
 var builder = require('botbuilder');
@@ -16,7 +17,7 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 var connector = new builder.ChatConnector({
     appId: process.env.MicrosoftAppId,
     appPassword: process.env.MicrosoftAppPassword,
-    openIdMetadata: process.env.BotOpenIdMetadata
+    openIdMetadata: process.env.BotOpenIdMetadata || ''
 });
 
 // Listen for messages from users 
@@ -28,19 +29,16 @@ server.post('/api/messages', connector.listen());
  * For samples and documentation, see: https://github.com/Microsoft/BotBuilder-Azure
  * ---------------------------------------------------------------------------------------- */
 
-// //  Azure storage
-// var tableName = 'botdata';
-// var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
-// var tableStorage = new botbuilder_azure.AzureBotStorage({
-//     gzipData: false
-// }, azureTableClient);
+//  Azure storage
+var tableName = 'botdata';
+var azureTableClient = new botbuilder_azure.AzureTableClient(tableName, process.env['AzureWebJobsStorage']);
+var tableStorage = new botbuilder_azure.AzureBotStorage({
+    gzipData: false
+}, azureTableClient);
 
-// // Create your bot with a function to receive messages from the user
-// var bot = new builder.UniversalBot(connector);
-// bot.set('storage', tableStorage);
-
+// Create your bot with a function to receive messages from the user
 var bot = new builder.UniversalBot(connector);
-bot.set('storage', new builder.MemoryBotStorage());
+bot.set('storage', tableStorage);
 
 // Make sure you add code to validate these fields
 var luisAppId = process.env.LuisAppId;
@@ -60,9 +58,11 @@ var intents = new builder.IntentDialog({
         }
     ])
     .onDefault((session) => {
-        session.send(
-            ['Sorry, I did not understand \'%s\'.', session.message.text]
-        );
+        let text = session.message.text;
+        session.send([
+            'Sorry, I did not understand: ${text}',
+            '抱歉，我不太明白什麼是: ${text}'
+        ]);
     });
 
 
