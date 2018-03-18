@@ -95,7 +95,8 @@ var intents = new builder.IntentDialog({
             var msg = new builder.Message(session).addAttachment(card);
             session.send(msg);
 
-
+            // --------------------------------------------------------
+            // --------------------------------------------------------
             // A lot of demo belows:
             session.send('以下是Demo - Hero Card:');
             var card = new builder.HeroCard(session)
@@ -205,9 +206,75 @@ var intents = new builder.IntentDialog({
             var msg = new builder.Message(session).addAttachment(card);
             session.send(msg);
 
-            session.endConversation();
+            // --------------------------------------------------------
+            // --------------------------------------------------------
+        },
+        (session, args, next) => {
+            builder.Prompts.choice(session, "你打算買身體檢查嗎？", ['是的', '不用，謝謝。'], {
+                maxRetries: 3,
+                retryPrompt: "抱歉我不明白你的意思。能再說一遍嗎？"
+            });
+        },
+        (session, result, next) => {
+            if (result.response == '是的'){
+                next();
+            }else{
+                session.endDialog("沒問題。下次見。");
+                session.endConversation();
+            }
+        },
+        (session, result, next) => {
+            builder.Prompts.text(session, "借問點稱呼？");
+        },
+        (session, result, next) => {
+            session.userData.name = result.response;
+            session.send(`好的。 ${result.response}。在推介之前，為了明白你的真正需要，請你回答幾個問題。`);
+            next();
+        },
+
+        (session, result, next) => {
+            builder.Prompts.number(session, "請問你的年齡是?");
+        },
+        (session, result, next) => {
+            session.userData.age = result.response;
+            builder.Prompts.choice(session, `好的。${session.userData.name}, 你是男性或是女性?`, "男性|女性");
+        },
+
+        (session, result, next) => {
+            session.userData.gender = result.response;
+            builder.Prompts.confirm(session, "有吸煙習慣嗎？", "有|沒有");
+        },
+        (session, result, next) => {
+            session.userData.isSmoking = result.response;
+            builder.Prompts.confirm(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, "有|沒有");
+        },
+
+        (session, result, next) => {
+            session.userData.isDrinking = result.response;
+            builder.Prompts.text(session, "就快完成了。請問您有任何家族病史嗎？");
+        },
+        (session, result, next) => {
+            session.userData.family_illness_history = result.response;
+            session.beginDialog("getEmail");
+        },
+        (session, result, next) => {
+            let name = session.userData.name;
+            let age = session.userData.age;
+            let gender = session.userData.gender;
+            let isSmoking = session.userData.isSmoking && '有吸煙習慣' || '沒有吸煙習慣';
+            let isDrinking = session.userData.isDrinking && '有飲酒習慣' || '沒有飲酒習慣';
+            let email = session.userData.email;
+
+            let finalMsg = `好的。${name}。你今年 ${age} 歲，${gender}，${isSmoking}，${isDrinking}。電郵地址是：${email}。`;
+            session.send(finalMsg);
+
+            session.endConversation("你的資料我們已妥善並安全地保存。放心。我們的同事稍後會聯絡你。多謝你聯絡生活易。Bye Bye.");
         }
     ])
+    // .matches('First Time Body Check Guide', [
+    //     (session, args, next) => {
+    //     }
+    // ])
     .onDefault((session) => {
         let text = session.message.text;
         session.send([
@@ -216,5 +283,25 @@ var intents = new builder.IntentDialog({
         ]);
     });
 
+bot.dialog('getEmail', [
+    function(session, args){
+        if(args && !args.is_email){
+            builder.Prompts.text(session, "電郵地址好像不對啊?  能不能再輸入一次？");
+        }else{
+            builder.Prompts.text(session, "最後，${session.userData.name}，你的電郵地址是?");
+        }
+    },
+    function(session, result){
+        let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let is_email = pattern.test(result);
+
+        if(is_email){
+            session.userData.email = result.response;
+            next();
+        }else{
+            session.replaceDialog("getEmail", {'is_email': false})
+        }
+    }
+]);
 
 bot.dialog('/', intents);
