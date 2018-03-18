@@ -218,7 +218,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             });
         },
         (session, result, next) => {
-            console.log(result);
+            session.send(result.respons);
             if (result.response == 1){
                 next();
             }else{
