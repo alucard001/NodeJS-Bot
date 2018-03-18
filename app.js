@@ -51,9 +51,7 @@ const LuisModelUrl = 'https://' + luisAPIHostName + '/luis/v1/application?id=' +
 // Main dialog with LUIS
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
 
-var intents = new builder.IntentDialog({
-        recognizers: [recognizer]
-    })
+var intents = new builder.IntentDialog({ recognizers: [recognizer] })
     .matches('ESD_BodyCheck', [
         (session, args, next) => {
 
@@ -212,13 +210,16 @@ var intents = new builder.IntentDialog({
             next();
         },
         (session, args, next) => {
+            // https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-prompt#promptschoice
             builder.Prompts.choice(session, "你打算買身體檢查嗎？", ['是的', '不用，謝謝。'], {
                 maxRetries: 3,
-                retryPrompt: "抱歉我不明白你的意思。能再說一遍嗎？"
+                retryPrompt: "抱歉我不明白你的意思。能再說一遍嗎？",
+                listStyle: 3
             });
         },
         (session, result, next) => {
-            if (result.response == '是的'){
+            console.log(result);
+            if (result.response == 1){
                 next();
             }else{
                 session.endDialog("沒問題。下次見。");
@@ -233,7 +234,6 @@ var intents = new builder.IntentDialog({
             session.send(`好的。 ${result.response}。在推介之前，為了明白你的真正需要，請你回答幾個問題。`);
             next();
         },
-
         (session, result, next) => {
             builder.Prompts.number(session, "請問你的年齡是?");
         },
@@ -241,7 +241,6 @@ var intents = new builder.IntentDialog({
             session.userData.age = result.response;
             builder.Prompts.choice(session, `好的。${session.userData.name}, 你是男性或是女性?`, "男性|女性");
         },
-
         (session, result, next) => {
             session.userData.gender = result.response;
             builder.Prompts.confirm(session, "有吸煙習慣嗎？", "有|沒有");
@@ -250,7 +249,6 @@ var intents = new builder.IntentDialog({
             session.userData.isSmoking = result.response;
             builder.Prompts.confirm(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, "有|沒有");
         },
-
         (session, result, next) => {
             session.userData.isDrinking = result.response;
             builder.Prompts.text(session, "就快完成了。請問您有任何家族病史嗎？");
@@ -273,16 +271,17 @@ var intents = new builder.IntentDialog({
             session.endConversation("你的資料我們已妥善並安全地保存。放心。我們的同事稍後會聯絡你。多謝你聯絡生活易。Bye Bye.");
         }
     ])
-    // .matches('First Time Body Check Guide', [
-    //     (session, args, next) => {
-    //     }
-    // ])
     .onDefault((session) => {
         let text = session.message.text;
         session.send([
             `Sorry, I did not understand: ${text}`,
             `抱歉，我不太明白什麼是: ${text}`
         ]);
+    }).triggerAction({
+        matches: /^esd$/i,
+        onSelectAction: (session, args, next) => {
+            console.log("run esd");
+        }
     });
 
 bot.dialog('getEmail', [
@@ -304,6 +303,17 @@ bot.dialog('getEmail', [
             session.replaceDialog("getEmail", {'is_email': false})
         }
     }
-]);
+]).triggerAction({
+    matches: /^email$/i,
+    onSelectAction: (session, args, next) => {
+        console.log("run email");
+    }
+});
 
-bot.dialog('/', intents);
+bot.dialog('/', intents).triggerAction({
+    matches: /^esd$/i,
+    onSelectAction: (session, args, next) => {
+        console.log("run root");
+    }
+
+});
