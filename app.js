@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------------------
-A simple echo bot for the Microsoft Bot Framework. 
+A simple echo bot for the Microsoft Bot Framework.
 -----------------------------------------------------------------------------*/
 require('dotenv').config();
 
@@ -20,11 +20,11 @@ var connector = new builder.ChatConnector({
     openIdMetadata: process.env.BotOpenIdMetadata || ''
 });
 
-// Listen for messages from users 
+// Listen for messages from users
 server.post('/api/messages', connector.listen());
 
 /*----------------------------------------------------------------------------------------
- * Bot Storage: This is a great spot to register the private state storage for your bot. 
+ * Bot Storage: This is a great spot to register the private state storage for your bot.
  * We provide adapters for Azure Table, CosmosDb, SQL Azure, or you can implement your own!
  * For samples and documentation, see: https://github.com/Microsoft/BotBuilder-Azure
  * ---------------------------------------------------------------------------------------- */
@@ -58,10 +58,45 @@ var intents = new builder.IntentDialog({
         (session, args, next) => {
 
             session.send('購買身體檢查流程如下：');
-            session.send('1. 選取你想購買的身體檢查及按「購買」');
-            session.send('2. 選擇你的免費及附加項目 (適用於有相關選項的身體檢查)');
-            session.send('3. 選擇你的免費禮品(適用於有相關選項的身體檢查)，之後按「確認」至下一頁填寫資料。如你想選購其他產品，可先按「儲存繼續選購」。');
 
+            session.send('1. 選取你想購買的身體檢查及按「購買」');
+            var card = new builder.HeroCard(session)
+                .title('1. 選取你想購買的身體檢查及按「購買」')
+                .images([
+                    builder.CardImage.create(session, 'http://203.184.176.136/bot/1.png')
+                ])
+                .buttons([
+                    builder.CardAction.openUrl(session, 'http://203.184.176.136/bot/1.png', '放大')
+                ]);
+            var msg = new builder.Message(session).addAttachment(card);
+            session.send(msg);
+
+            session.send('2. 選擇你的免費及附加項目 (適用於有相關選項的身體檢查)');
+            var card = new builder.HeroCard(session)
+                .title('2. 選擇你的免費及附加項目 (適用於有相關選項的身體檢查)')
+                .images([
+                    builder.CardImage.create(session, 'http://203.184.176.136/bot/2.png')
+                ])
+                .buttons([
+                    builder.CardAction.openUrl(session, 'http://203.184.176.136/bot/2.png', '放大')
+                ]);
+            var msg = new builder.Message(session).addAttachment(card);
+            session.send(msg);
+
+            session.send('3. 選擇你的免費禮品(適用於有相關選項的身體檢查)，之後按「確認」至下一頁填寫資料。如你想選購其他產品，可先按「儲存繼續選購」。');
+            var card = new builder.HeroCard(session)
+                .title('3. 選擇你的免費禮品(適用於有相關選項的身體檢查)，之後按「確認」至下一頁填寫資料。如你想選購其他產品，可先按「儲存繼續選購」。')
+                .images([
+                    builder.CardImage.create(session, 'http://203.184.176.136/bot/3.png')
+                ])
+                .buttons([
+                    builder.CardAction.openUrl(session, 'http://203.184.176.136/bot/3.png', '放大')
+                ]);
+            var msg = new builder.Message(session).addAttachment(card);
+            session.send(msg);
+
+
+            // A lot of demo belows:
             session.send('以下是Demo - Hero Card:');
             var card = new builder.HeroCard(session)
                 .title('BotFramework Hero Card')
@@ -75,7 +110,7 @@ var intents = new builder.IntentDialog({
                 ]);
 
             var msg = new builder.Message(session).addAttachment(card);
-            session.send(msg);                
+            session.send(msg);
 
             session.send('以下是Demo - Thumbnail Card:');
             var card = new builder.ThumbnailCard(session)
@@ -90,7 +125,7 @@ var intents = new builder.IntentDialog({
                 ]);
 
             var msg = new builder.Message(session).addAttachment(card);
-            session.send(msg);                
+            session.send(msg);
 
             session.send('以下是Demo - ReceiptCard Card: 買東西用的');
             var order = 1234;
@@ -116,7 +151,7 @@ var intents = new builder.IntentDialog({
                 ]);
 
             var msg = new builder.Message(session).addAttachment(card);
-            session.send(msg);        
+            session.send(msg);
 
             session.send('以下是Demo - Signin Card:');
             var card = new builder.SigninCard(session)
@@ -124,7 +159,7 @@ var intents = new builder.IntentDialog({
                 .button('Sign-in', 'https://login.microsoftonline.com');
 
             var msg = new builder.Message(session).addAttachment(card);
-            session.send(msg);                
+            session.send(msg);
 
             session.send('以下是Demo - Animation Card:');
             var card = new builder.AnimationCard(session)
@@ -136,7 +171,7 @@ var intents = new builder.IntentDialog({
                 ]);
 
             var msg = new builder.Message(session).addAttachment(card);
-            session.send(msg);                
+            session.send(msg);
 
             session.send('以下是Demo - Video Card:');
             var card = new builder.VideoCard(session)
@@ -152,7 +187,7 @@ var intents = new builder.IntentDialog({
                 ]);
 
             var msg = new builder.Message(session).addAttachment(card);
-            session.send(msg);                
+            session.send(msg);
 
             session.send('以下是Demo - Audio Card:');
             var card = new builder.AudioCard(session)
@@ -168,9 +203,9 @@ var intents = new builder.IntentDialog({
                 ]);
 
             var msg = new builder.Message(session).addAttachment(card);
-            session.send(msg);                
+            session.send(msg);
 
-            session.endConversation();            
+            session.endConversation();
         }
     ])
     .onDefault((session) => {
