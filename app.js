@@ -39,7 +39,6 @@ server.post('/api/messages', connector.listen());
 // var bot = new builder.UniversalBot(connector);
 // bot.set('storage', tableStorage);
 
-// Local storage
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', new builder.MemoryBotStorage());
 
