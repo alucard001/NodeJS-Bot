@@ -41,15 +41,21 @@ var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
 // Make sure you add code to validate these fields
-var luisAppId = process.env.LuisAppId;
-var luisAPIKey = process.env.LuisAPIKey;
+// var luisAppId = process.env.LuisAppId;
+// var luisAPIKey = process.env.LuisAPIKey;
+
+var luisAppId = '33847639-beb9-4237-8c4b-a44166e70b77';
+var luisAPIKey = 'e790f6ad71e048e5bb57998c81a44ca1';
+
 var luisAPIHostName = process.env.LuisAPIHostName || 'westus.api.cognitive.microsoft.com';
 
 const LuisModelUrl = 'https://' + luisAPIHostName + '/luis/v1/application?id=' + luisAppId + '&subscription-key=' + luisAPIKey;
 
 // Main dialog with LUIS
 var recognizer = new builder.LuisRecognizer(LuisModelUrl);
-var intents = new builder.IntentDialog({
+
+var intents = new builder.IntentDialog(
+    {
         recognizers: [recognizer]
     })
     .matches('ESD_BodyCheck', [
