@@ -55,13 +55,14 @@ var intents = new builder.IntentDialog({
     .matches('ESD_BodyCheck', [
         (session, args, next) => {
             session.send("It works");
+            session.endConversation();
         }
     ])
     .onDefault((session) => {
         let text = session.message.text;
         session.send([
-            'Sorry, I did not understand: ${text}',
-            '抱歉，我不太明白什麼是: ${text}'
+            `Sorry, I did not understand: ${text}`,
+            `抱歉，我不太明白什麼是: ${text}`
         ]);
     });
 
