@@ -265,7 +265,11 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             }else{
                 session.userData.gender = "女";
             }
-            builder.Prompts.choice(session, "有吸煙習慣嗎？", ["有", "沒有"]);
+            builder.Prompts.choice(session, "有吸煙習慣嗎？", ["有", "沒有"], {
+                maxRetries: 3,
+                retryPrompt: "抱歉我不明白你的意思。能再說一遍嗎？",
+                listStyle: 3
+            });
         },
         (session, result, next) => {
             // session.userData.isSmokingReturn = result;
@@ -276,7 +280,11 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             }else{
                 session.userData.isSmoking = false;
             }
-            builder.Prompts.choice(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, ["有", "沒有"]);
+            builder.Prompts.choice(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, ["有", "沒有"], {
+                maxRetries: 3,
+                retryPrompt: "抱歉我不明白你的意思。能再說一遍嗎？",
+                listStyle: 3
+            });
         },
         (session, result, next) => {
             // session.userData.isDrinkingReturn = result;
