@@ -326,6 +326,7 @@ bot.dialog('getEmail', [
     function(session, args){
         session.userData.email_args = args;
         session.save();
+
         if(args && !args.is_email){
             builder.Prompts.text(session, "電郵地址好像不對啊?  能不能再輸入一次？");
         }else{
