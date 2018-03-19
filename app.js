@@ -40,6 +40,18 @@ var tableStorage = new botbuilder_azure.AzureBotStorage({
 var bot = new builder.UniversalBot(connector);
 bot.set('storage', tableStorage);
 
+// bot.use({
+//     receive: function(event, next){
+//         next();
+//     },
+//     botbuilder: function(session, next){
+//         next();
+//     },
+//     send: function(event, next){
+//         next();
+//     }
+// });
+
 // Make sure you add code to validate these fields
 var luisAppId = process.env.LuisAppId;
 var luisAPIKey = process.env.LuisAPIKey;
@@ -218,7 +230,8 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             });
         },
         (session, result, next) => {
-            session.send(result.response);
+            session.userData.isbought = result;
+            session.save();
             if (result.response == 1){
                 next();
             }else{
