@@ -338,7 +338,7 @@ bot.dialog('getEmail', [
 
         if(is_email){
             session.userData.email = result.response;
-            next();
+            // next();
         }else{
             session.replaceDialog("getEmail", {'is_email': false})
         }
