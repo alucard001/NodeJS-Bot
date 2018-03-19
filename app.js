@@ -260,7 +260,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             });
         },
         (session, result, next) => {
-            if (result.response.index == 1){
+            if (result.response.index == 0){
                 session.userData.gender = "男";
             }else{
                 session.userData.gender = "女";
@@ -268,9 +268,10 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             builder.Prompts.confirm(session, "有吸煙習慣嗎？", ["有", "沒有"]);
         },
         (session, result, next) => {
-            session.userData.isSmokingReturn = result;
-            session.save();
-            if (result.response.index == 1){
+            // session.userData.isSmokingReturn = result;
+            // session.save();
+
+            if (result.response.index == 0){
                 session.userData.isSmoking = true;
             }else{
                 session.userData.isSmoking = false;
@@ -278,11 +279,11 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             builder.Prompts.confirm(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, ["有", "沒有"]);
         },
         (session, result, next) => {
-            session.userData.isDrinkingReturn = result;
-            session.save();
+            // session.userData.isDrinkingReturn = result;
+            // session.save();
 
             session.userData.isDrinking = result.response.index;
-            if (result.response.index == 1) {
+            if (result.response.index == 0) {
                 session.userData.isDrinking = true;
             } else {
                 session.userData.isDrinking = false;
@@ -298,8 +299,19 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             let name = session.userData.name;
             let age = session.userData.age;
             let gender = session.userData.gender;
-            let isSmoking = session.userData.isSmoking && '有吸煙習慣' || '沒有吸煙習慣';
-            let isDrinking = session.userData.isDrinking && '有飲酒習慣' || '沒有飲酒習慣';
+
+            if (session.userData.isSmoking) {
+                let isSmoking = '有吸煙習慣';
+            }else{
+                let isSmoking = '沒有吸煙習慣';
+            }
+
+            if (session.userData.isDrinking) {
+                let isDrinking = '有飲酒習慣';
+            }else{
+                let isDrinking = '沒有飲酒習慣';
+            }
+
             let email = session.userData.email;
             session.save();
 
