@@ -265,7 +265,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             }else{
                 session.userData.gender = "女";
             }
-            builder.Prompts.confirm(session, "有吸煙習慣嗎？", ["有", "沒有"]);
+            builder.Prompts.choice(session, "有吸煙習慣嗎？", ["有", "沒有"]);
         },
         (session, result, next) => {
             // session.userData.isSmokingReturn = result;
@@ -276,7 +276,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             }else{
                 session.userData.isSmoking = false;
             }
-            builder.Prompts.confirm(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, ["有", "沒有"]);
+            builder.Prompts.choice(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, ["有", "沒有"]);
         },
         (session, result, next) => {
             // session.userData.isDrinkingReturn = result;
