@@ -292,6 +292,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         (session, result, next) => {
             session.userData.family_illness_history = result.response;
             session.beginDialog("getEmail");
+            next();
         },
         (session, result, next) => {
             let name = session.userData.name;
@@ -330,15 +331,11 @@ bot.dialog('getEmail', [
         }
     },
     function(session, result){
-        session.userData.email_result = result;
-        session.save();
-
         let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         let is_email = pattern.test(result.response);
 
         if(is_email){
             session.userData.email = result.response;
-            // next();
         }else{
             session.replaceDialog("getEmail", {'is_email': false})
         }
