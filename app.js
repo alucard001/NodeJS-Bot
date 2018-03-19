@@ -291,7 +291,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         },
         (session, result, next) => {
             session.userData.family_illness_history = result.response;
-            session.beginDialog("getEmail", {'is_email': true});
+            session.beginDialog("getEmail", {'is_correct_email': true});
             next();
         },
         (session, result, next) => {
@@ -327,7 +327,7 @@ bot.dialog('getEmail', [
         session.userData.email_args = args;
         session.save();
 
-        if(args && !args.is_email){
+        if(args && args.is_email == false){
             builder.Prompts.text(session, "電郵地址好像不對啊?  能不能再輸入一次？");
         }else{
             builder.Prompts.text(session, `最後，${session.userData.name}，你的電郵地址是?`);
@@ -340,7 +340,7 @@ bot.dialog('getEmail', [
         if(is_email){
             session.userData.email = result.response;
         }else{
-            session.replaceDialog("getEmail", {'is_email': false})
+            session.replaceDialog("getEmail", {'is_email': false});
         }
     }
 ]).triggerAction({
