@@ -253,23 +253,44 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         },
         (session, result, next) => {
             session.userData.age = result.response;
-            builder.Prompts.choice(session, `好的。${session.userData.name}, 你是男性或是女性?`, "男性|女性");
+            builder.Prompts.choice(session, `好的。${session.userData.name}, 你是男性或是女性?`, ["男性", "女性"], {
+                maxRetries: 3,
+                retryPrompt: "抱歉我不明白你的意思。你出生時的性別你不知道嗎？",
+                listStyle: 3
+            });
         },
         (session, result, next) => {
-            session.userData.gender = result.response;
-            builder.Prompts.confirm(session, "有吸煙習慣嗎？", "有|沒有");
+            if (result.response.index == 1){
+                session.userData.gender = "男";
+            }else{
+                session.userData.gender = "女";
+            }
+            builder.Prompts.confirm(session, "有吸煙習慣嗎？", ["有", "沒有"]);
         },
         (session, result, next) => {
-            session.userData.isSmoking = result.response;
-            builder.Prompts.confirm(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, "有|沒有");
+            session.userData.isSmokingReturn = result;
+            session.save();
+            if (result.response.index == 1){
+                session.userData.isSmoking = true;
+            }else{
+                session.userData.isSmoking = false;
+            }
+            builder.Prompts.confirm(session, `明白。${session.userData.name}。有飲酒習慣嗎？`, ["有", "沒有"]);
         },
         (session, result, next) => {
-            session.userData.isDrinking = result.response;
+            session.userData.isDrinkingReturn = result;
+            session.save();
+
+            session.userData.isDrinking = result.response.index;
+            if (result.response.index == 1) {
+                session.userData.isDrinking = true;
+            } else {
+                session.userData.isDrinking = false;
+            }
             builder.Prompts.text(session, "就快完成了。請問您有任何家族病史嗎？");
         },
         (session, result, next) => {
             session.userData.family_illness_history = result.response;
-            session.save();
             session.beginDialog("getEmail");
         },
         (session, result, next) => {
@@ -279,6 +300,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             let isSmoking = session.userData.isSmoking && '有吸煙習慣' || '沒有吸煙習慣';
             let isDrinking = session.userData.isDrinking && '有飲酒習慣' || '沒有飲酒習慣';
             let email = session.userData.email;
+            session.save();
 
             let finalMsg = `好的。${name}。你今年 ${age} 歲，${gender}，${isSmoking}，${isDrinking}。電郵地址是：${email}。`;
             session.send(finalMsg);
@@ -304,12 +326,15 @@ bot.dialog('getEmail', [
         if(args && !args.is_email){
             builder.Prompts.text(session, "電郵地址好像不對啊?  能不能再輸入一次？");
         }else{
-            builder.Prompts.text(session, "最後，${session.userData.name}，你的電郵地址是?");
+            builder.Prompts.text(session, `最後，${session.userData.name}，你的電郵地址是?`);
         }
     },
     function(session, result){
-        let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        let is_email = pattern.test(result);
+        session.userData.email_result = result;
+        session.save();
+
+        let pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        let is_email = pattern.test(result.response);
 
         if(is_email){
             session.userData.email = result.response;
