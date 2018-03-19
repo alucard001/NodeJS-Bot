@@ -322,10 +322,12 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
                 isDrinking = '沒有飲酒習慣';
             }
 
+            let family_illness_history = session.userData.family_illness_history;
+
             let email = session.userData.email;
             session.save();
 
-            let finalMsg = `好的。${name}。你今年 ${age} 歲，${gender}，${isSmoking}，${isDrinking}。電郵地址是：${email}。`;
+            let finalMsg = `好的。${name}。你今年 ${age} 歲，${gender}，${isSmoking}，${isDrinking}, 家族病史: ${family_illness_history}。電郵地址是：${email}。`;
             session.send(finalMsg);
 
             session.endConversation("你的資料我們已妥善並安全地保存。放心。我們的同事稍後會聯絡你。多謝你聯絡生活易。Bye Bye.");
