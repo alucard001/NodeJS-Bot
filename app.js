@@ -291,7 +291,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         },
         (session, result, next) => {
             session.userData.family_illness_history = result.response;
-            session.beginDialog("getEmail", {'is_email': false});
+            session.beginDialog("getEmail", {'is_email': true});
             next();
         },
         (session, result, next) => {
