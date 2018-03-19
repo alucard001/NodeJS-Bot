@@ -300,16 +300,18 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             let age = session.userData.age;
             let gender = session.userData.gender;
 
+            let isSmoking, isDrinking;
+
             if (session.userData.isSmoking) {
-                let isSmoking = '有吸煙習慣';
+                isSmoking = "有吸煙習慣";
             }else{
-                let isSmoking = '沒有吸煙習慣';
+                isSmoking = '沒有吸煙習慣';
             }
 
             if (session.userData.isDrinking) {
-                let isDrinking = '有飲酒習慣';
+                isDrinking = '有飲酒習慣';
             }else{
-                let isDrinking = '沒有飲酒習慣';
+                isDrinking = '沒有飲酒習慣';
             }
 
             let email = session.userData.email;
