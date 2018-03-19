@@ -339,16 +339,12 @@ bot.dialog('getEmail', [
 
         if(is_email){
             session.userData.email = result.response;
+            session.endDialog();
         }else{
             session.replaceDialog("getEmail", {'is_email': false});
         }
     }
-]).triggerAction({
-    matches: /^email$/i,
-    onSelectAction: (session, args, next) => {
-        console.log("run email");
-    }
-});
+]);
 
 bot.dialog('/', intents).triggerAction({
     matches: /^esd$/i,
