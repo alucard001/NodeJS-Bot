@@ -230,9 +230,10 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
             });
         },
         (session, result, next) => {
-            session.userData.isbought = result;
-            session.save();
-            if (result.response == 1){
+            // session.userData.isbought = result;
+            // result: {"isbought":{"resumed":0,"response":{"index":0,"entity":"是的","score":1},"childId":"BotBuilder:prompt-choice"}}
+            // session.save();
+            if (result.response.index == 0){
                 next();
             }else{
                 session.endDialog("沒問題。下次見。");
@@ -268,6 +269,7 @@ var intents = new builder.IntentDialog({ recognizers: [recognizer] })
         },
         (session, result, next) => {
             session.userData.family_illness_history = result.response;
+            session.save();
             session.beginDialog("getEmail");
         },
         (session, result, next) => {
