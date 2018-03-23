@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').load();
+require('dotenv').config();
 
 const builder = require('botbuilder');
 const azure_storage = require("./azure_storage")
