@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').load();
+require('dotenv').config();
 
 let tableName = '';
 let tableStorage = '';
